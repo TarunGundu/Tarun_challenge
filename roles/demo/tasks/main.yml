@@ -1,0 +1,78 @@
+- name: Adding epel-release Repo
+    yum:
+      become: yes
+      name: epel-release
+      state: present
+
+- name: Installing Nginx
+    yum:
+      become: yes
+      name: nginx
+      state: present
+
+- name: Install Python 36 packages
+  become: yes
+  yum:
+    name: python36
+    state: present
+
+- name: Deleting default Nginx conf
+    become: yes
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+
+- name: Adding code dir
+    become: yes
+    file:
+      path: /var/www/demo
+      state: present
+
+- name: Adding html file
+    become: yes
+    copy:
+      src: files/index.html
+      dest: /var/www/demo/index.html
+      mode: 755
+
+- name: Copy app nginx conf
+    become: yes
+      copy:
+        src: files/demo.conf
+        dest: /etc/nginx/sites-enabled/demo.conf
+        mode: 755
+
+- name: Copy app nginx conf
+    become: yes
+      copy:
+        src: files/demo.conf
+        dest: /etc/nginx/sites-enabled/demo.conf
+        mode: 755
+
+- name: Copy ssl key
+    become: yes
+      copy:
+        src: files/key.pem
+        dest: /etc/ssl/key.pem
+        mode: 744
+
+- name: Copy ssl cert
+    become: yes
+      copy:
+        src: files/cert.pem
+        dest: /etc/ssl/cert.pem
+        mode: 744
+
+- name: Starting Nginx Server
+    become: yes
+    service:
+      name: nginx
+      state: started
+
+- iptables_raw:
+    name: allow_http
+    rules: '-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT'
+
+- iptables_raw:
+    name: allow_https
+    rules: '-A INPUT -p tcp -m tcp --dport 443 -j ACCEPT'

@@ -1,0 +1,1 @@
+demo ansible_host="SYS_IP" ansible_user="root" ansible_ssh_common_args='-i key.pem -o StrictHostKeyChecking=no'
